@@ -1,0 +1,9 @@
+.sider{
+    width: 250px;
+    height: 100%;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid #ddd;
+    max-width: 250px;
+    min-width: 250px;
+
+}
