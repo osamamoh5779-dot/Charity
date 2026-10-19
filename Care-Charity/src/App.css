@@ -9,3 +9,8 @@
     flex: 1;
     background-color: var(--bg-main);
 }
+
+body {
+  font-family: "Roboto", sans-serif;
+    background-color: var(--bg-main);
+}

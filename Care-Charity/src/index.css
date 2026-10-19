@@ -1,127 +1,66 @@
+/* ==========================================================================
+   WE CARE / CHARITY FLOW - DESIGN SYSTEM (SIMPLIFIED)
+   ========================================================================== */
+
+/* 1. المتغيرات الأساسية الثابتة (أحجام، مسافات، حدود) */
 :root {
-  /* ==================== 1. LAYOUT & CONTAINER SIZES ==================== */
-  --sidebar-width: 260px;           /* عرض القائمة الجانبية المفتوحة */
-  --sidebar-width-collapsed: 72px;  /* عرض القائمة الجانبية عند الطي */
-  --header-height: 64px;            /* ارتفاع الشريط العلوي Header */
-  --max-content-width: 1440px;      /* أقصى عرض لمحتوى الصفحة الرئيسي */
-
-  /* ==================== 2. COMPONENT HEIGHTS (ارتفاعات دقيقة للمكونات) ==================== */
-  --input-height-sm: 32px;          /* عناصر الإدخال والأزرار الصغيرة (Badges/Filters) */
-  --input-height-md: 40px;          /* الحجم القياسي بحقول الإدخال والأزرار (Inputs/Buttons) */
-  --input-height-lg: 48px;          /* الأزرار والحقول الكبيرة (مثل صندوق الدردشة الرئيسي) */
-
-  /* ==================== 3. COMPONENT WIDTHS (أعراض العناصر الأكثر استخداماً) ==================== */
-  --modal-width-sm: 400px;          /* المودال الصغير/رسائل التأكيد Confirmation */
-  --modal-width-md: 600px;          /* المودال القياسي للنماذج Forms */
-  --modal-width-lg: 800px;          /* المودال الكبير للتفاصيل التفصيلية */
-  --card-min-width: 280px;          /* أقل عرض لبطاقات الإحصائيات (Metrics Cards) */
-
-  /* ==================== 4. ICON SIZES (أبعاد الأيقونات الموحدة) ==================== */
-  --icon-size-sm: 16px;             /* الأيقونات داخل الأزرار والشارات */
-  --icon-size-md: 20px;             /* الأيقونات الأساسية داخل القوائم والحقول */
-  --icon-size-lg: 24px;             /* أيقونات العناوين والكروت */
-  --avatar-size: 36px;              /* حجم صورة المستخدم الشخصية */
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
 }
 
 /* ==========================================================================
-   WE CARE / CHARITY FLOW - GLOBAL DESIGN SYSTEM
-   Author: Senior Front-End & UI/UX Lead
-   Description: Standardized CSS Variables for Light & Dark Modes (Junior-Safe)
+   2. LIGHT MODE (الوضع الفاتح)
    ========================================================================== */
-
 :root, [data-theme="light"], .light {
-  /* ==================== 1. COLOR PALETTE: LIGHT MODE ==================== */
-  /* Backgrounds & Surfaces */
-  --bg-main: #f8fafc;          /* خلفية الصفحة العامة */
-  --bg-surface: #ffffff;       /* خلفية البطاقات والجداول */
-  --bg-sidebar: #FFFFFF;       /* خلفية الشريط الجانبي الداكنة */
-  --bg-sidebar-hover: rgba(255, 255, 255, 0.08);
-  --bg-subtle: #f1f5f9;        /* خلفيات العناصر الفرعية والأزرار الثانوية */
-
-  /* Typography */
-  --text-main: #1e293b;        /* النصوص الأساسية */
-  --text-muted: #64748b;       /* النصوص الثانوية والوصف */
-  --text-inverse: #ffffff;     /* النصوص الفاتحة على خلفيات داكنة */
-  --text-sidebar: #94a3b8;     /* نصوص الروابط في القائمة الجانبية */
-  --text-sidebar-active: #ffffff;
-
-  /* Brand & Primary Actions (Teal / Cyan Accents) */
-  --primary: #0d9488;          /* اللون الأساسي (زر الإرسال، الأيقونات النشطة) */
-  --primary-hover: #0f766e;    /* لون الزر عند المرور عليه */
-  --primary-light: #ccfbf1;    /* خلفية خفيفة للعناصر المحددة */
-
-  /* Semantic Status Colors (حالات النظام والتنبيهات) */
-  --success: #10b981;          /* للعمليات المكتملة والمؤكدة (Verified / Completed) */
-  --success-bg: #ecfdf5;
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #ffffff;
   
-  --warning: #f59e0b;          /* للطلبات المعلقة أو التي تتطلب مراجعة (Pending / Urgent) */
-  --warning-bg: #fffbeb;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
   
-  --danger: #ef4444;           /* للحالات الحرجة والأخطاء (Critical / Errors) */
-  --danger-bg: #fef2f2;
-
-  /* Borders & Dividers */
-  --border-color: #e2e8f0;     /* حدود البطاقات والجداول */
-  --border-subtle: #f1f5f9;
-
-  /* ==================== 2. SPACING SCALE (4px / 8px Base) ==================== */
-  --space-1: 4px;   /* مسافات دقيقة جداً بين الأيقونات والنصوص */
-  --space-2: 8px;   /* حشو داخلي للأزرار الصغيرة */
-  --space-3: 12px;  
-  --space-4: 16px;  /* الحشو القياسي للبطاقات (Padding) */
-  --space-5: 24px;  /* المسافات بين الأقسام الرئيسية */
-  --space-6: 32px;  
-  --space-8: 48px;  
-
-  /* ==================== 3. BORDER RADIUS ==================== */
-  --radius-sm: 6px;    /* للأزرار الصغيرة والشارات (Badges) */
-  --radius-md: 10px;   /* للبطاقات (Cards) وحقول الإدخال */
-  --radius-lg: 16px;   /* للحاويات الكبيرة */
-  --radius-full: 9999px; /* للأزرار الدائرية وأيقونات الحالة */
-
-  /* ==================== 4. SHADOWS (Elevation) ==================== */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --primary: #0d9488;
+  --primary-hover: #85d8a15c;
+  
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  
+  --mainBorder : #ddddddd1;
+  --border-color: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* ==================== 5. COLOR PALETTE: DARK MODE ==================== */
+/* ==========================================================================
+   3. DARK MODE (الوضع الداكن)
+   ========================================================================== */
 [data-theme="dark"], .dark {
-  --bg-main: #0b0f19;          /* خلفية داكنة مريحة للعين (Deep Slate) */
-  --bg-surface: #111827;       /* خلفية البطاقات الداكنة */
-  --bg-sidebar: #07090e;       /* شريط جانبي داكن جداً */
-  --bg-sidebar-hover: rgba(255, 255, 255, 0.06);
-  --bg-subtle: #1f2937;
-
+  --bg-main: #0b0f19;
+  --bg-surface:  #07090e;
+  --bg-sidebar: #111827;
+  
   --text-main: #f3f4f6;
   --text-muted: #9ca3af;
-  --text-inverse: #111827;
-  --text-sidebar: #9ca3af;
-  --text-sidebar-active: #ffffff;
-
-  --primary: #14b8a6;          /* تدرج تيل أفتح قليلاً ليتناسب مع الخلفية الداكنة */
+  
+  --primary: #14b8a6;
   --primary-hover: #0d9488;
-  --primary-light: rgba(20, 184, 166, 0.15);
-
+  
   --success: #34d399;
-  --success-bg: rgba(52, 211, 153, 0.12);
-  
   --warning: #fbbf24;
-  --warning-bg: rgba(251, 191, 36, 0.12);
-  
   --danger: #f87171;
-  --danger-bg: rgba(248, 113, 113, 0.12);
-
-  --border-color: #1f2937;
-  --border-subtle: #1e293b;
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+  
+  --mainBorder : #dddddd2b;
+  --border-color: #0d9488;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
-
-
-
 
 
 
