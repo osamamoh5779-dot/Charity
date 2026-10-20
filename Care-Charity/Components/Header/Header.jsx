@@ -3,6 +3,7 @@ import './Header.css'
 import { CiDark, CiLight } from "react-icons/ci";
 
 import { themepage } from '../../Data/Data';
+import Search from '../Search/Search';
 
 export default function Header() {
 
@@ -14,10 +15,15 @@ export default function Header() {
 
     return (
         <div className="header">
+
             <div className="header-content">
-                {theme === "dark" ? <CiLight style={{color: "white"}} onClick={() => setTheme(theme === "light" ? "dark" : "light")} /> : <CiDark onClick={() => setTheme(theme === "light" ? "dark" : "light")} />
-                }
+                <Search />
+                <div className="ColorMode">
+                    {theme === "dark" ? <CiLight style={{ color: "white" }} onClick={() => setTheme(theme === "light" ? "dark" : "light")} /> : <CiDark onClick={() => setTheme(theme === "light" ? "dark" : "light")} />
+                    }
+                </div>
             </div>
+
         </div>
     )
 }
