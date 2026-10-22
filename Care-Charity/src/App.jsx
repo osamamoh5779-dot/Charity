@@ -1,5 +1,5 @@
-import Header from "../Components/Header/Header"
-import Sider from "../Components/Sider/Sider"
+import Header from "./Components/Header/Header"
+import Sider from "./Components/Sider/Sider"
 import './App.css'
 
 function App() {
