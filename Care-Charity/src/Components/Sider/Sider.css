@@ -1,12 +1,16 @@
-.sider{
-    width: 250px;
-    height: 100%;
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--mainBorder);
-    max-width: 250px;
-    min-width: 250px;
-    
+.sider {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  flex-shrink: 0;
 
+  height: 100vh;   
+  position: sticky;   
+  top: 0;
+  overflow-y: auto;  
+
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--mainBorder);
 }
 
 .sidebar-list{
@@ -44,10 +48,12 @@
     color: var(--text-main);
 }
 
-.sidebar-icon{
-    margin-right: 10px;
+.sidebar-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-inline-end: 10px; 
 }
-
 .sidebar-text{
     font-size: 16px;
     font-weight: 500;

@@ -68,8 +68,8 @@ export const sidebarItems = [
     icon: LuFileText,
   },
   {
-    label: "Audit Log",
-    path: "/audit-log",
+    label: "Activity Log",
+    path: "/activity-log",
     icon: LuHistory,
   },
   {

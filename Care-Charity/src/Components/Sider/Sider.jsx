@@ -1,30 +1,29 @@
 import { sidebarItems } from "../../Data/Data";
 import "./Sider.css";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+
 function Sidebar() {
   // eslint-disable-next-line no-unused-vars
   const { activeItem, setActiveItem } = useState(null);
-  const linkofdomain = useLocation();
+
   return (
     <div className="sider">
       <div className="sidebar-header">
         <h2>Care Charity</h2>
       </div>
       <div className="sidebar-list">
-        {sidebarItems.map((item, index) => (
-          <Link
+        {sidebarItems.map((item) => (
+          <NavLink
+            key={item.path}
             to={item.path}
-            key={index}
-            className={`sidebar-item ${linkofdomain.pathname === item.path ? "active" : ""}`}
-            onClick={() => setActiveItem(index)}
+            className={({ isActive }) =>
+              `sidebar-item ${isActive ? "active" : ""}`
+            }
           >
-            <div>
-              <item.icon className="sidebar-icon" />
-              <span className="sidebar-text">{item.label}</span>
-            </div>
-          </Link>
+            <item.icon className="sidebar-icon" />
+            <span className="sidebar-text">{item.label}</span>
+          </NavLink>
         ))}
       </div>
     </div>
