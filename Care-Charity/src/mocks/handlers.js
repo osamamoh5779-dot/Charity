@@ -1,6 +1,7 @@
 import { http, HttpResponse, delay } from "msw";
+import { userHandlers } from "./users";
 
- 
+/* ---------- داتا وهمية (320 سجل على ~26 يوم، ثابتة مع كل ريلود) ---------- */
 let seed = 7;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
@@ -22,14 +23,78 @@ const USERS = {
 };
 
 const ACTIONS = [
-  { label: "Approved donation", variant: "teal", type: "donations", by: "Admin", target: ["donation", "Donation", "5,000 EGP · Vodafone Cash"], change: ["status", "pending", "approved"], route: "/donations/review" },
-  { label: "Made donation", variant: "info", type: "donations", by: "Donor", target: ["donation", "Donation", "1,200 EGP · Card"], change: ["status", undefined, "pending"], route: "/donate" },
-  { label: "Marked installment paid", variant: "teal", type: "donations", by: "Volunteer", target: ["installment", "Installment", "1,200 EGP"], change: ["status", "pending", "paid"], route: "/installments" },
-  { label: "Submitted new case", variant: "info", type: "cases", by: "Volunteer", target: ["case", "Case assistance", "Kidney Dialysis"], change: ["assistance_type", undefined, "recurring"], route: "/cases/new" },
-  { label: "Assigned volunteer", variant: "purple", type: "cases", by: "Admin", target: ["case", "Case", "Cardiac Surgery"], change: ["volunteer", "none", "Mona Salem"], route: "/cases" },
-  { label: "Approved volunteer application", variant: "teal", type: "volunteers", by: "Admin", target: ["user", "User", "Volunteer applicant"], change: ["status", "pending", "approved"], route: "/volunteers/submissions" },
-  { label: "Created fund transfer", variant: "teal", type: "system", by: "System", target: ["transfer", "Fund transfer", "2,500 EGP"], change: ["status", "pending", "completed"], route: "/transfers" },
-  { label: "Deactivated user", variant: "danger", type: "system", by: "Admin", target: ["user", "User", "Omar Hassan"], change: ["active", "1", "0"], route: "/users" },
+  {
+    label: "Approved donation",
+    variant: "teal",
+    type: "donations",
+    by: "Admin",
+    target: ["donation", "Donation", "5,000 EGP · Vodafone Cash"],
+    change: ["status", "pending", "approved"],
+    route: "/donations/review",
+  },
+  {
+    label: "Made donation",
+    variant: "info",
+    type: "donations",
+    by: "Donor",
+    target: ["donation", "Donation", "1,200 EGP · Card"],
+    change: ["status", undefined, "pending"],
+    route: "/donate",
+  },
+  {
+    label: "Marked installment paid",
+    variant: "teal",
+    type: "donations",
+    by: "Volunteer",
+    target: ["installment", "Installment", "1,200 EGP"],
+    change: ["status", "pending", "paid"],
+    route: "/installments",
+  },
+  {
+    label: "Submitted new case",
+    variant: "info",
+    type: "cases",
+    by: "Volunteer",
+    target: ["case", "Case assistance", "Kidney Dialysis"],
+    change: ["assistance_type", undefined, "recurring"],
+    route: "/cases/new",
+  },
+  {
+    label: "Assigned volunteer",
+    variant: "purple",
+    type: "cases",
+    by: "Admin",
+    target: ["case", "Case", "Cardiac Surgery"],
+    change: ["volunteer", "none", "Mona Salem"],
+    route: "/cases",
+  },
+  {
+    label: "Approved volunteer application",
+    variant: "teal",
+    type: "volunteers",
+    by: "Admin",
+    target: ["user", "User", "Volunteer applicant"],
+    change: ["status", "pending", "approved"],
+    route: "/volunteers/submissions",
+  },
+  {
+    label: "Created fund transfer",
+    variant: "teal",
+    type: "system",
+    by: "System",
+    target: ["transfer", "Fund transfer", "2,500 EGP"],
+    change: ["status", "pending", "completed"],
+    route: "/transfers",
+  },
+  {
+    label: "Deactivated user",
+    variant: "danger",
+    type: "system",
+    by: "Admin",
+    target: ["user", "User", "Omar Hassan"],
+    change: ["active", "1", "0"],
+    route: "/users",
+  },
 ];
 
 const N = 320;
@@ -45,7 +110,11 @@ const LOGS = Array.from({ length: N }, (_, i) => {
     type: a.type,
     user,
     action: { label: a.label, variant: a.variant },
-    target: { type: a.target[0], title: `${a.target[1]} #${Math.floor(rnd() * 900) + 100}`, sub: a.target[2] },
+    target: {
+      type: a.target[0],
+      title: `${a.target[1]} #${Math.floor(rnd() * 900) + 100}`,
+      sub: a.target[2],
+    },
     changes: [{ field, from, to }],
     status,
     route: a.route,
@@ -92,21 +161,28 @@ function sortLogs(rows, sort = "-created_at") {
   const desc = sort.startsWith("-");
   const get = SORTERS[sort.replace(/^-/, "")] ?? SORTERS.created_at;
   return [...rows].sort((a, b) => {
-    const x = get(a), y = get(b);
+    const x = get(a),
+      y = get(b);
     const c = x < y ? -1 : x > y ? 1 : 0;
     return (desc ? -c : c) || a.id.localeCompare(b.id);
   });
 }
 
-const params = (request) => Object.fromEntries(new URL(request.url).searchParams);
+const params = (request) =>
+  Object.fromEntries(new URL(request.url).searchParams);
 
 export const handlers = [
+  ...userHandlers,
+
   http.get("/api/activity-logs", async ({ request }) => {
     const p = params(request);
     await delay(400);
 
     if (p.q === "error") {
-      return HttpResponse.json({ message: "Simulated failure" }, { status: 500 });  
+      return HttpResponse.json(
+        { message: "Simulated failure" },
+        { status: 500 },
+      );  
     }
 
     const page = Math.max(1, Number(p.page) || 1);
@@ -114,7 +190,7 @@ export const handlers = [
 
     const rows = sortLogs(filterLogs(p), p.sort);
 
-     
+  
     const counts = { all: 0, donations: 0, cases: 0, volunteers: 0, system: 0 };
     for (const l of filterLogs(p, { ignoreTab: true })) {
       counts.all++;
@@ -123,13 +199,22 @@ export const handlers = [
 
     return HttpResponse.json({
       data: rows.slice((page - 1) * size, page * size),
-      meta: { total: rows.length, page, page_size: size, last_page: Math.max(1, Math.ceil(rows.length / size)), counts },
+      meta: {
+        total: rows.length,
+        page,
+        page_size: size,
+        last_page: Math.max(1, Math.ceil(rows.length / size)),
+        counts,
+      },
     });
   }),
- 
+
+   
   http.get("/api/activity-logs/export", async ({ request }) => {
     const p = params(request);
     await delay(500);
-    return HttpResponse.json({ data: sortLogs(filterLogs(p), p.sort).slice(0, 5000) });
+    return HttpResponse.json({
+      data: sortLogs(filterLogs(p), p.sort).slice(0, 5000),
+    });
   }),
 ];

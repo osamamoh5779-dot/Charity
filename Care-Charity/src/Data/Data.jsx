@@ -10,7 +10,8 @@ import {
   LuFileText, 
   LuHistory, 
   LuUserCog, 
-  LuSettings 
+  LuSettings,
+  LuShieldCheck
 } from "react-icons/lu";
 
 export const themepage = "light";
@@ -73,9 +74,14 @@ export const sidebarItems = [
     icon: LuHistory,
   },
   {
-    label: "Users & Roles",
+    label: "Users",
     path: "/users",
     icon: LuUserCog,
+  },
+  {
+    label: "Roles & Permissions",
+    path: "/roles",
+    icon: LuShieldCheck,
   },
   {
     label: "Settings",
