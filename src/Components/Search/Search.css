@@ -1,0 +1,15 @@
+.search-input {
+    padding: 10px;
+    border: 1px solid var(--mainBorder);
+    border-radius: 5px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    min-width: 200px;
+    width: 50%;
+}
+
+.search{
+    flex: 1;
+}
+
