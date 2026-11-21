@@ -1,3 +1,4 @@
+
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
@@ -15,7 +16,6 @@
   --color-primary: #06b6d4;
   --color-primary-hover: #0891b2;
   --color-primary-light: #22d3ee;
-  --color-on-primary: #080d1a;
   --color-teal: #14b8a6;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
@@ -27,116 +27,374 @@
   --color-ink-secondary: #94a3b8;
   --color-ink-muted: #64748b;
   --font-sans: "Inter", "Cairo", sans-serif;
-  --color-violet: #818cf8;
-}
-
-[data-theme="light"] {
-  --color-canvas: #f4f7f6;
-  --color-sidebar: #ffffff;
-  --color-card: #ffffff;
-  --color-card-hover: #eef3f2;
-  --color-border: #e2e8f0;
-  --color-border-light: #cbd5e1;
-  --color-primary: #0f766e;
-  --color-primary-hover: #115e59;
-  --color-primary-light: #0f766e;
-  --color-on-primary: #ffffff;
-  --color-teal: #0f766e;
-  --color-warning: #b45309;
-  --color-danger: #dc2626;
-  --color-rose: #e11d48;
-  --color-success: #047857;
-  --color-ink: #0f172a;
-  --color-ink-strong: #1e293b;
-  --color-ink-soft: #334155;
-
-  --color-ink-secondary: #475569;
-  --color-ink-muted: #64748b;
-  --color-violet: #4f46e5;
-}
-
-html[data-theme="dark"] {
-  color-scheme: dark;
-}
-html[data-theme="light"] {
-  color-scheme: light;
 }
 
 @layer base {
-  html {
-    background: var(--color-canvas);
-    color: var(--color-ink-strong);
-    font-family: var(--font-sans);
-  }
-  *,
-  ::before,
-  ::after {
-    border-color: var(--color-border);
-  }
+  html { background: var(--color-canvas); color: var(--color-ink-strong); font-family: var(--font-sans); }
+  *, ::before, ::after { border-color: var(--color-border); }
+  .tnum { font-variant-numeric: tabular-nums; }
 }
-/* ==========================================================================
-   WE CARE / CHARITY FLOW - DESIGN SYSTEM (SIMPLIFIED)
-   ========================================================================== */
 
-/* 1. المتغيرات الأساسية الثابتة (أحجام، مسافات، حدود) */
 :root {
-  --sidebar-width: 260px;
-  --header-height: 64px;
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
+  
+  --sidebar-width: 260px; 
+  --sidebar-width-collapsed: 72px; 
+  --header-height: 64px; 
+  --max-content-width: 1440px; 
+  
+  --input-height-sm: 32px; 
+  --input-height-md: 40px; 
+  --input-height-lg: 48px; 
+  
+  --modal-width-sm: 400px; 
+  --modal-width-md: 600px; 
+  --modal-width-lg: 800px; 
+  --card-min-width: 280px; 
+  
+  --icon-size-sm: 16px; 
+  --icon-size-md: 20px; 
+  --icon-size-lg: 24px; 
+  --avatar-size: 36px; 
 }
 
-/* ==========================================================================
-   2. LIGHT MODE (الوضع الفاتح)
-   ========================================================================== */
 :root,
 [data-theme="light"],
 .light {
-  --bg-main: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-sidebar: #ffffff;
+  
+  --bg-main: #f8fafc; 
+  --bg-surface: #ffffff; 
+  --bg-sidebar: #ffffff; 
+  --bg-sidebar-hover: rgba(255, 255, 255, 0.08);
+  --bg-subtle: #f1f5f9; 
+  
+  --text-main: #1e293b; 
+  --text-muted: #64748b; 
+  --text-inverse: #ffffff; 
+  --text-sidebar: #94a3b8; 
+  --text-sidebar-active: #ffffff;
+  
+  --primary: #0d9488; 
+  --primary-hover: #0f766e; 
+  --primary-light: #ccfbf1; 
+  
+  --success: #10b981; 
+  --success-bg: #ecfdf5;
 
-  --text-main: #1e293b;
-  --text-muted: #64748b;
+  --warning: #f59e0b; 
+  --warning-bg: #fffbeb;
 
-  --primary: #0d9488;
-  --primary-hover: #85d8a15c;
-
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-
-  --mainBorder: #ddddddd1;
-  --border-color: #e2e8f0;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --danger: #ef4444; 
+  --danger-bg: #fef2f2;
+  
+  --border-color: #e2e8f0; 
+  --border-subtle: #f1f5f9;
+  
+  --space-1: 4px; 
+  --space-2: 8px; 
+  --space-3: 12px;
+  --space-4: 16px; 
+  --space-5: 24px; 
+  --space-6: 32px;
+  --space-8: 48px;
+  
+  --radius-sm: 6px; 
+  --radius-md: 10px; 
+  --radius-lg: 16px; 
+  --radius-full: 9999px; 
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* ==========================================================================
-   3. DARK MODE (الوضع الداكن)
-   ========================================================================== */
 [data-theme="dark"],
 .dark {
-  --bg-main: #0b0f19;
-  --bg-surface: #07090e;
-  --bg-sidebar: #111827;
+  --bg-main: #0b0f19; 
+  --bg-surface: #111827; 
+  --bg-sidebar: #07090e; 
+  --bg-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --bg-subtle: #1f2937;
 
   --text-main: #f3f4f6;
   --text-muted: #9ca3af;
+  --text-inverse: #111827;
+  --text-sidebar: #9ca3af;
+  --text-sidebar-active: #ffffff;
 
-  --primary: #14b8a6;
+  --primary: #14b8a6; 
   --primary-hover: #0d9488;
+  --primary-light: rgba(20, 184, 166, 0.15);
 
   --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
+  --success-bg: rgba(52, 211, 153, 0.12);
 
-  --mainBorder: #dddddd2b;
-  --border-color: #0d9488;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.12);
+
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+
+  --border-color: #1f2937;
+  --border-subtle: #1e293b;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+
+html {
+  line-height: 1.15; 
+  -webkit-text-size-adjust: 100%; 
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  display: block;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+hr {
+  box-sizing: content-box; 
+  height: 0; 
+  overflow: visible; 
+}
+
+* {
+  box-sizing: border-box;
+}
+
+pre {
+  font-family: monospace, monospace; 
+  font-size: 1em; 
+}
+
+a {
+  background-color: transparent;
+}
+
+abbr[title] {
+  border-bottom: none; 
+  text-decoration: underline; 
+  text-decoration: underline dotted; 
+}
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+code,
+kbd,
+samp {
+  font-family: monospace, monospace; 
+  font-size: 1em; 
+}
+
+small {
+  font-size: 80%;
+}
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+img {
+  border-style: none;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; 
+  font-size: 100%; 
+  line-height: 1.15; 
+  margin: 0; 
+}
+
+button,
+input {
+  
+  overflow: visible;
+}
+
+button,
+select {
+  
+  text-transform: none;
+}
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+legend {
+  box-sizing: border-box; 
+  color: inherit; 
+  display: table; 
+  max-width: 100%; 
+  padding: 0; 
+  white-space: normal; 
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+textarea {
+  overflow: auto;
+}
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box; 
+  padding: 0; 
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type="search"] {
+  -webkit-appearance: textfield; 
+  outline-offset: -2px; 
+}
+
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; 
+  font: inherit; 
+}
+
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
+}
+
+template {
+  display: none;
+}
+
+[hidden] {
+  display: none;
+}
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-canvas: #f8fafc;
+  --color-sidebar: #ffffff;
+  --color-card: #ffffff;
+  --color-card-hover: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-light: #cbd5e1;
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-primary-light: #0f766e;
+  --color-teal: #0d9488;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+  --color-rose: #e11d48;
+  --color-success: #059669;
+  --color-ink: #0f172a;
+  --color-ink-strong: #1e293b;
+  --color-ink-soft: #334155;
+  --color-ink-secondary: #64748b;
+  --color-ink-muted: #94a3b8;
+
+  --color-slate-300: #334155;
+  --color-slate-400: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-600: #94a3b8;
+  --color-slate-700: #cbd5e1;
+  --color-slate-800: #e2e8f0;
+
+  --color-teal-300: #0f766e;
+  --color-teal-400: #0d9488;
+  --color-teal-700: #5eead4;
+  --color-teal-900: #ccfbf1;
+  --color-teal-950: #ccfbf1;
+
+  --color-cyan-300: #0e7490;
+  --color-cyan-400: #0891b2;
+  --color-cyan-700: #67e8f9;
+  --color-cyan-800: #67e8f9;
+  --color-cyan-950: #cffafe;
+
+  --color-emerald-400: #059669;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-950: #d1fae5;
+
+  --color-amber-300: #92400e;
+  --color-amber-400: #b45309;
+  --color-amber-600: #fcd34d;
+  --color-amber-700: #fcd34d;
+  --color-amber-950: #fef3c7;
+
+  --color-rose-300: #be123c;
+  --color-rose-400: #e11d48;
+  --color-rose-700: #fda4af;
+  --color-rose-950: #ffe4e6;
+
+  --color-indigo-300: #4338ca;
+  --color-indigo-700: #a5b4fc;
+  --color-indigo-950: #e0e7ff;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }

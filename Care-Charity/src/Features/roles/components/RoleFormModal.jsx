@@ -1,52 +1,93 @@
+import { useState } from "react";
 import { Hash, ShieldPlus, UserPen } from "lucide-react";
 import Button from "@/components/ui/Button";
+import InfoBanner from "@/components/ui/InfoBanner";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import Select from "@/components/ui/Select";
 import TextArea from "@/components/ui/TextArea";
 import useFormState from "@/hooks/useFormState";
+import { useToast } from "@/hooks/useToast";
 import { useCreateRole, useUpdateRole } from "../hooks/useRoles";
 
 const FORM_ID = "role-form";
-const SLUG_RE = /^[a-z][a-z0-9_]{1,39}$/;
+const SLUG_RE = /^[a-z0-9_]+$/;
+
+const slugify = (s) =>
+  s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 
 function RoleForm({ role, roles, totalPermissions, onClose, onCreated }) {
   const isNew = !role;
   const create = useCreateRole();
   const update = useUpdateRole();
   const mutation = isNew ? create : update;
+  const toast = useToast();
 
-  const { form, errors, setErrors, set } = useFormState({
+  const {
+    form,
+    errors,
+    setErrors,
+    set,
+    update: setField,
+  } = useFormState({
     key: role?.key ?? "",
     name: role?.name ?? "",
     description: role?.description ?? "",
     copy_from: "none",
   });
+  const [slugEdited, setSlugEdited] = useState(false);
+
+  const onNameChange = (e) => {
+    set("name")(e);
+    if (isNew && !slugEdited) setField("key", slugify(e.target.value));
+  };
+  const onKeyChange = (e) => {
+    setSlugEdited(true);
+    set("key")(e);
+  };
 
   const submit = (e) => {
     e.preventDefault();
     const errs = {};
-    if (isNew) {
-      if (!SLUG_RE.test(form.key)) errs.key = "Use lowercase letters, numbers and underscores (start with a letter)";
-      else if (roles.some((r) => r.key === form.key)) errs.key = "This slug is already used";
-    }
+    if (isNew && !SLUG_RE.test(form.key))
+      errs.key = "Use lowercase letters, numbers and underscores only";
     if (!form.name.trim()) errs.name = "Display name is required";
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
-    const details = { name: form.name.trim(), description: form.description.trim() };
+    const details = {
+      name: form.name.trim(),
+      description: form.description.trim(),
+    };
 
-    if (!isNew) return update.mutate({ id: role.id, ...details }, { onSuccess: onClose });
+    if (!isNew) {
+      return update.mutate(
+        { role, ...details },
+        {
+          onSuccess: () => {
+            toast.success("Role updated", `"${details.name}" was saved.`);
+            onClose();
+          },
+        },
+      );
+    }
 
     const source = roles.find((r) => String(r.id) === form.copy_from);
     create.mutate(
-      { key: form.key, ...details, permissions: source ? source.permissions : [] },
+      {
+        key: form.key,
+        ...details,
+        ids: source ? Object.values(source.permissionIds) : [],
+      },
       { onSuccess: (created) => (onCreated(created), onClose()) },
     );
   };
 
-   
-  const copyable = roles.filter((r) => !r.locked);
+  const server = mutation.error?.fieldErrors;
 
   return (
     <Modal
@@ -55,7 +96,11 @@ function RoleForm({ role, roles, totalPermissions, onClose, onCreated }) {
       onClose={onClose}
       icon={isNew ? ShieldPlus : UserPen}
       title={isNew ? "New Role" : "Edit Role"}
-      subtitle={isNew ? "Define a role, then fine-tune its permissions on its card" : role.name}
+      subtitle={
+        isNew
+          ? "Define a role, then fine-tune its permissions on its card"
+          : role.name
+      }
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
@@ -69,30 +114,35 @@ function RoleForm({ role, roles, totalPermissions, onClose, onCreated }) {
     >
       <form id={FORM_ID} onSubmit={submit} noValidate className="space-y-4">
         <Input
+          label="Display name"
+          required
+          placeholder="e.g. Field Coordinator"
+          value={form.name}
+          onChange={onNameChange}
+          error={errors.name ?? server?.display_name?.[0]}
+        />
+        <Input
           label="Role name (slug)"
           required
           mono
           leftIcon={Hash}
           placeholder="e.g. field_coordinator"
-          hint={isNew ? "Unique machine-readable identifier used for token RBAC claims" : "The slug can't be changed"}
+          hint={
+            isNew
+              ? "Unique identifier. Filled in from the display name"
+              : "The slug can't be changed"
+          }
           value={form.key}
-          onChange={set("key")}
-          error={errors.key}
+          onChange={onKeyChange}
+          error={errors.key ?? server?.name?.[0]}
           disabled={!isNew}
-        />
-        <Input
-          label="Display name"
-          required
-          placeholder="e.g. Field Coordinator"
-          value={form.name}
-          onChange={set("name")}
-          error={errors.name}
         />
         <TextArea
           label="Description"
           placeholder="Describe the responsibilities and scope of this role"
           value={form.description}
           onChange={set("description")}
+          error={server?.description?.[0]}
         />
         {isNew && (
           <Select
@@ -102,7 +152,7 @@ function RoleForm({ role, roles, totalPermissions, onClose, onCreated }) {
             onChange={set("copy_from")}
           >
             <option value="none">None (start blank)</option>
-            {copyable.map((r) => (
+            {roles.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name} ({r.permissions.length} of {totalPermissions} enabled)
               </option>
@@ -110,17 +160,14 @@ function RoleForm({ role, roles, totalPermissions, onClose, onCreated }) {
           </Select>
         )}
 
-        {mutation.isError && (
-          <p role="alert" className="m-0 text-xs text-rose-400">
-            {mutation.error.message}
-          </p>
+        {mutation.isError && !server && (
+          <InfoBanner variant="error">{mutation.error.message}</InfoBanner>
         )}
       </form>
     </Modal>
   );
 }
 
- 
 export default function RoleFormModal({ role, ...props }) {
   if (role === undefined) return null;
   return <RoleForm role={role} {...props} />;

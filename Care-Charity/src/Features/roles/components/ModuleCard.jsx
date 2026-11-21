@@ -1,33 +1,34 @@
 import { memo } from "react";
-import { Lock } from "lucide-react";
 import { cn } from "@/utils/cn";
-import Badge from "@/components/ui/Badge";
 import Switch from "@/components/ui/Switch";
-import { SUPER_ADMIN_KEY } from "../constants";
-import { canGrant } from "../permissions";
 
 function PermissionRow({ perm, checked, disabled, onToggle }) {
-  const muted = disabled && !checked;
-
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 rounded-lg border border-border bg-canvas p-2.5",
-        muted && "opacity-75",
+        "flex items-center justify-between gap-3 px-4 py-2.5 transition-colors",
+        checked ? "bg-primary/5" : !disabled && "hover:bg-ink/[0.02]",
       )}
     >
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className={cn("text-[13px] font-semibold", muted ? "text-ink-secondary" : "text-ink-strong")}>
-            {perm.label}
-          </span>
-          {perm.superAdminOnly && (
-            <Badge variant="warning" size="xs" square>
-              Super Admin only
-            </Badge>
+      <div className="min-w-0 leading-tight">
+        <span
+          className={cn(
+            "block text-[13px] font-semibold",
+            checked ? "text-ink" : "text-slate-300",
           )}
-        </div>
-        <p className="mt-2 text-[11px] text-ink-muted">{perm.description}</p>
+        >
+          {perm.label}
+        </span>
+        {perm.description && (
+          <p
+            className={cn(
+              "m-0 mt-0.5 text-[11px]",
+              checked ? "text-slate-400" : "text-slate-500",
+            )}
+          >
+            {perm.description}
+          </p>
+        )}
       </div>
 
       <Switch
@@ -40,84 +41,75 @@ function PermissionRow({ perm, checked, disabled, onToggle }) {
   );
 }
 
-
-function ModuleCard({ module, role, enabled, onChange }) {
+function ModuleCard({ module, enabled, editable, onChange }) {
   const Icon = module.icon;
-  const editable = !role.locked;
-  const restricted = module.superAdminOnly && role.key !== SUPER_ADMIN_KEY;
+  const viewKey = module.permissions.find((p) => p.action === "view")?.key;
+  const granted = module.permissions.filter((p) => enabled.has(p.key)).length;
+  const allOn = granted === module.permissions.length;
 
-   
-  const isOn = (key) => role.locked || enabled.has(key);
-  const grantable = module.permissions.filter((p) => canGrant(role, module, p));
-  const granted = module.permissions.filter((p) => isOn(p.key)).length;
-  const allOn = grantable.every((p) => isOn(p.key));
+  const toggle = (keys, on) =>
+    onChange(
+      on && viewKey && !keys.includes(viewKey) ? [...keys, viewKey] : keys,
+      on,
+    );
 
   return (
-    <section
-      className={cn(
-        "flex flex-col gap-3.5 rounded-xl border border-border bg-sidebar p-4 transition hover:border-border-light",
-        restricted && "opacity-65",
-      )}
-    >
-      <header className="flex items-center justify-between gap-3 border-b border-border pb-2.5">
+    <section className="mb-5 block break-inside-avoid overflow-hidden rounded-xl border border-border bg-sidebar">
+      <header className="flex items-center justify-between gap-3 border-b border-slate-800/60 px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <span
             aria-hidden="true"
-            className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border",
-              restricted
-                ? "border-border-light bg-white/5 text-ink-secondary"
-                : "border-primary-light/30 bg-primary/10 text-primary-light",
-            )}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400"
           >
             <Icon className="h-4 w-4" />
           </span>
-          <div className="min-w-0">
-            <h4 className="m-0 text-[15px] font-semibold text-ink">{module.label}</h4>
-            <p className="mt-2 text-[11px] text-ink-muted">{module.description}</p>
+          <div className="min-w-0 leading-tight">
+            <h4 className="m-0 text-[15px] font-semibold text-ink">
+              {module.label}
+            </h4>
+            {module.description && (
+              <p className="m-0 mt-0.5 text-[11px] text-slate-500">
+                {module.description}
+              </p>
+            )}
           </div>
         </div>
 
-        {restricted ? (
-          <Badge variant="warning" size="sm" square>
-            Super Admin only
-          </Badge>
-        ) : (
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="rounded-full border border-primary-light/25 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary-light tnum">
-              {granted} of {module.permissions.length}
-            </span>
-            {editable && grantable.length > 1 && (
-              <button
-                type="button"
-                onClick={() => onChange(grantable.map((p) => p.key), !allOn)}
-                className="cursor-pointer border-0 bg-transparent p-0 text-[11px] font-medium text-primary-light hover:underline focus-visible:outline-2 focus-visible:outline-primary-light"
-              >
-                {allOn ? "Clear all" : "Allow all"}
-              </button>
-            )}
-          </div>
-        )}
+        <div className="flex shrink-0 items-center gap-1.5">
+          <span className="rounded-full border border-primary-light/25 bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary-light tnum">
+            {granted} of {module.permissions.length}
+          </span>
+          {editable && module.permissions.length > 1 && (
+            <button
+              type="button"
+              onClick={() =>
+                toggle(
+                  module.permissions.map((p) => p.key),
+                  !allOn,
+                )
+              }
+              className={cn(
+                "cursor-pointer rounded-md border-0 bg-transparent px-2 py-1 text-xs font-medium text-cyan-400 transition-colors hover:bg-cyan-500/10",
+                "focus-visible:outline-2 focus-visible:outline-primary-light",
+              )}
+            >
+              {allOn ? "clear all" : "Allow all"}
+            </button>
+          )}
+        </div>
       </header>
 
-      <div className="space-y-2">
+      <div className="divide-y divide-slate-800/60">
         {module.permissions.map((perm) => (
           <PermissionRow
             key={perm.key}
             perm={perm}
-            checked={isOn(perm.key)}
-            disabled={!editable || !canGrant(role, module, perm)}
-            onToggle={onChange}
+            checked={enabled.has(perm.key)}
+            disabled={!editable}
+            onToggle={toggle}
           />
         ))}
       </div>
-
-      {restricted && (
-        <p className="m-0 mt-auto rounded-lg border border-border bg-white/[0.02] py-1.5 text-center text-[11px] font-medium text-ink-muted">
-          <Lock aria-hidden="true" className="mr-1 inline h-3 w-3" />
-          Restricted to Super Admin
-        </p>
-      )}
     </section>
   );
 }

@@ -8,4 +8,9 @@ export default defineConfig({
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      "/api/v1": { target: "https://wecare.manfazy.com", changeOrigin: true },
+    },
+  },
 });
